@@ -11,7 +11,11 @@ const QUIZ_GROUPS = {
   mindset: "Карта: Тип мышления",
 };
 const NEWSLETTER_GROUP = process.env.NEWSLETTER_GROUP || "Life by Design — Newsletter";
-const FIELDS = ["lbd_test", "lbd_result", "lbd_details", "lbd_question"];
+// lbd_l1..lbd_l5 и lbd_l1_text..lbd_l5_text - части результата с описаниями (языки любви).
+// Каждое поле в MailerLite вмещает до 1024 символов, поэтому описания идут в отдельных полях.
+const PARTS = 5;
+const PART_FIELDS = Array.from({ length: PARTS }, (_, i) => [`lbd_l${i + 1}`, `lbd_l${i + 1}_text`]).flat();
+const FIELDS = ["lbd_test", "lbd_result", "lbd_details", "lbd_question", ...PART_FIELDS];
 
 const cache = { groups: {}, fieldsReady: false };
 
@@ -55,6 +59,16 @@ const clean = (v, max = 1000) => String(v ?? "").replace(/[<>]/g, "").trim().sli
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
+function partFields(parts) {
+  const list = Array.isArray(parts) ? parts.slice(0, PARTS) : [];
+  const out = {};
+  for (let i = 0; i < PARTS; i++) {
+    out[`lbd_l${i + 1}`] = clean(list[i]?.t, 200);
+    out[`lbd_l${i + 1}_text`] = clean(list[i]?.d, 1000);
+  }
+  return out;
+}
+
 export default async (req) => {
   if (req.method !== "POST") return json({ error: "method" }, 405);
   if (!process.env.MAILERLITE_API_KEY) return json({ error: "not configured" }, 500);
@@ -88,6 +102,7 @@ export default async (req) => {
           lbd_result: clean(b.result, 300),
           lbd_details: clean(b.details),
           lbd_question: clean(b.ask, 400),
+          ...partFields(b.parts),
         },
         groups,
       }),

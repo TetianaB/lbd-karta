@@ -135,7 +135,7 @@ p{margin:0 0 10px}
 .lang.top{border:3px solid var(--gold);background:var(--soft)}
 .lang .lt{display:flex;justify-content:space-between;font-weight:700;color:var(--head)}
 .lang .meter{margin:8px 0 6px;height:8px}
-.lang p{font-size:14px;color:var(--muted);margin:0}
+.lang p{font-size:15px;line-height:1.5;color:var(--muted);margin:0}
 /* profile */
 .slot{display:block;margin-bottom:14px}
 .slot label{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:15px;margin-bottom:6px}
@@ -250,7 +250,7 @@ const EXT = [
    ask:"Какие из предложенных профессий вызвали у вас неожиданный интерес?", slot:"onet", ph:"например: код SAE"},
   {id:"ll5", cat:"love", name:"5 языков любви (официальный)", by:"Гэри Чепмен, 5lovelanguages.com", url:"https://5lovelanguages.com/quizzes/love-language", kind:"pop", time:"10 мин", price:"Бесплатно", lang:"Английский",
    gives:"Оригинальный тест автора книги \"Пять языков любви\". Хорошо сравнить с вашим результатом в нашем тесте.",
-   ask:"Совпал ли результат с нашим тестом? Если нет - что изменилось в вашей жизни?", slot:"ll5", ph:"например: качественное время"},
+   ask:"Совпал ли результат с нашим тестом? Если нет - что изменилось в вашей жизни?", slot:"ll5", ph:"например: время вместе"},
   {id:"hd", cat:"energy", name:"Дизайн Человека", by:"Jovian Archive - официальный источник", url:"https://www.jovianarchive.com/Get_Your_Chart", kind:"intu", time:"2 мин", price:"Бесплатно", lang:"Английский",
    gives:"Бесплатный расчет вашей карты (бодиграфа) по дате, времени и месту рождения. Покажет ваш тип, стратегию и авторитет.",
    note:"Нужно точное время рождения. Это не научная система - используйте ее как повод для размышления.",
@@ -263,11 +263,11 @@ const EXT = [
 
 /* ===== Квизы Life by Design ===== */
 const LOVE = {
-  A:{t:"Слова одобрения", d:"Признание, комплименты и слова поддержки."},
-  B:{t:"Качественное время", d:"Внимание без остатка и совместные дела."},
-  C:{t:"Получение подарков", d:"Знаки внимания, в которых видна забота."},
-  D:{t:"Акты помощи", d:"Действия, которые облегчают вашу жизнь."},
-  E:{t:"Прикосновения", d:"Физическая близость, объятия и нежность."}
+  A:{t:"Слова любви и поддержки", d:"Вы чувствуете любовь, когда ее произносят вслух. Искренний комплимент, \"я тебя люблю\", \"я горжусь тобой\", благодарность и слова поддержки в трудный момент наполняют вас надолго. Резкая критика и холодное молчание ранят вас сильнее, чем других."},
+  B:{t:"Время вместе", d:"Для вас любовь - это внимание без остатка. Разговор, в котором вас по-настоящему слушают, прогулка вдвоем, общее дело без телефона в руках. Больнее всего, когда человек рядом, но мыслями где-то далеко, или когда ваши встречи постоянно переносятся."},
+  C:{t:"Подарки", d:"Для вас подарок - это видимый знак: \"я думал(а) о тебе\". Важна не цена, а внимание: мелочь из поездки, цветы без повода, вещь, о которой вы вскользь упомянули. Забытый праздник или подарок \"для галочки\" вы переживаете очень остро."},
+  D:{t:"Забота и помощь", d:"Для вас любовь видна в делах. Когда близкий человек берет на себя часть забот, помогает без просьбы и делает то, что облегчает вашу жизнь, вы чувствуете: обо мне заботятся. Обещания без дела и равнодушие к вашей нагрузке ранят сильнее любых слов."},
+  E:{t:"Прикосновения", d:"Вы чувствуете любовь через тело: объятия, поцелуи, рука в руке, легкое прикосновение мимоходом. Физическая близость дает вам ощущение тепла, безопасности и связи. Холодность и отстраненность вы переживаете как отвержение."}
 };
 const OWN = {
   aware:{cat:"know", type:"scale", title:"Насколько я самоосознанна?", time:"3 мин",
@@ -491,7 +491,7 @@ function grade(id, ans) {
   }
   const c = {A:0,B:0,C:0,D:0,E:0}; ans.forEach(k => c[k]++);
   const sorted = Object.keys(c).sort((a,b) => c[b]-c[a]);
-  return {counts:c, sorted, title: LOVE[sorted[0]].t + " и " + LOVE[sorted[1]].t.toLowerCase()};
+  return {counts:c, sorted, title: LOVE[sorted[0]].t + " + " + LOVE[sorted[1]].t};
 }
 
 function showResult() {
@@ -532,7 +532,7 @@ function mailForm() {
     <div id="m-msg" role="status"></div></form>`;
 }
 function resultDetails(id, q, r) {
-  if (r.sorted) return r.sorted.map((k,i) => `${i+1}. ${LOVE[k].t} (${r.counts[k]}) - ${LOVE[k].d}`).join("\n");
+  if (r.sorted) return r.sorted.map((k,i) => `${i+1}. ${LOVE[k].t} (${r.counts[k]})`).join(", ");
   return `${r.score} из ${r.max}. ${r.text}${r.vector ? "\n\nВаш вектор роста: " + r.vector : ""}`;
 }
 function bindMail(id, q, r) {
@@ -545,7 +545,7 @@ function bindMail(id, q, r) {
     btn.disabled = true; btn.textContent = "Отправляем...";
     try {
       const res = await fetch(SUBSCRIBE_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
-        name, email, quiz:id, test:q.title, result:r.title, details:resultDetails(id,q,r), ask:q.ask,
+        name, email, quiz:id, test:q.title, result:r.title, details:resultDetails(id,q,r), parts: r.sorted ? r.sorted.map((k,i) => ({t:`${i+1}. ${LOVE[k].t} (${r.counts[k]})`, d:LOVE[k].d})) : [], ask:q.ask,
         newsletter: $("#m-news").checked, website: $("#m-web").value })});
       if (!res.ok) throw new Error(res.status);
       S.me = {name, email}; save();
