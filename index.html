@@ -46,8 +46,8 @@ p{margin:0 0 10px}
 .muted{color:var(--muted)}
 /* hero */
 .hero{background:var(--blue);color:#fff;border-radius:0 0 32px 32px;padding:20px 20px 26px;margin-top:-2px}
-.hero h1{color:#fff}
-.hero p{color:#dfe7fb;max-width:34em}
+.hero h1{color:#fff;text-align:center}
+.hero p{color:#dfe7fb;max-width:34em;margin-left:auto;margin-right:auto;text-align:center}
 .map{display:block;width:100%;height:auto;margin:6px 0 4px}
 .map .ln{stroke:rgba(255,255,255,.28);stroke-width:1.5}
 .map .ln.on{stroke:var(--gold)}
@@ -58,7 +58,7 @@ p{margin:0 0 10px}
 .map .me{fill:#fff}
 .map .me-t{fill:var(--blue);font-weight:800;font-size:15px}
 .map g{cursor:pointer}
-.prog{display:flex;align-items:center;gap:12px;font-size:14px;color:#dfe7fb;margin:6px 0 16px}
+.prog{display:flex;align-items:center;justify-content:center;text-align:left;gap:12px;font-size:14px;color:#dfe7fb;margin:6px 0 16px}
 .prog b{color:var(--gold);font-size:20px;white-space:nowrap}
 /* buttons */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:14px 22px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-weight:600;font-size:16px;text-decoration:none;text-align:center;transition:transform .2s,opacity .2s}
@@ -348,7 +348,7 @@ function ctaBlock() {
 function home() {
   const nextOwn = OWN_IDS.find(id => !S.own[id]);
   view.innerHTML = `<section class="hero fade">
-    <h1>Узнайте себя по своему дизайну</h1>
+    <h1>Узнай себя лучше</h1>
     <p>Лучшие тесты самопознания в одном месте - с объяснением, что каждый дает, и ссылкой на первоисточник.</p>
     ${mapSVG()}
     <div class="prog"><b>${doneCount()} / 6</b> областей карты открыто. Нажмите на точку, чтобы перейти к ней.</div>
