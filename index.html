@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Карта самопознания</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: тёплый, уверенный голос коуча; много воздуха, ничего лишнего
+   IDEA: личная карта самопознания - каждая пройденная область зажигает точку на карте
+   PICTURE: синяя карта-созвездие "Я" с шестью областями, которые загораются золотом
+   COLOUR and TYPE: royal blue доминирует, кремовый фон, золото - акцент, красный - только бренд; Montserrat
+   LAYOUT: мобильное приложение - одна колонка, нижняя навигация, шторка с деталями теста */
+:root{color-scheme:light dark;
+--blue:#1e59c9;--blue-d:#163f91;--gold:#c5a059;--red:#e63946;
+--bg:light-dark(#fdfaf5,#10141f);--card:light-dark(#ffffff,#1a2030);--ink:light-dark(#2d2d2d,#f1ede4);
+--muted:light-dark(#6b6b6b,#a8a397);--soft:light-dark(#fff9e3,#262b38);--line:light-dark(#efe8d8,#2c3242);
+--head:light-dark(#1e59c9,#8fb0f0);--shadow:light-dark(0 10px 30px rgba(30,89,201,.08),0 10px 30px rgba(0,0,0,.35))}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Montserrat,system-ui,sans-serif;overflow-x:clip}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:var(--head)}
+.app{max-width:560px;margin:0 auto;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+.top{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 20px 12px}
+.brand{color:var(--red);font-weight:800;font-size:12px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--red)}
+.top small{color:var(--muted);font-size:13px}
+.band{padding:24px 20px}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:32px;font-weight:700}
+h2{font-size:22px;font-weight:700;color:var(--head);margin-bottom:14px}
+h3{font-size:17px;font-weight:700}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+/* hero */
+.hero{background:var(--blue);color:#fff;border-radius:0 0 32px 32px;padding:20px 20px 26px;margin-top:-2px}
+.hero h1{color:#fff}
+.hero p{color:#dfe7fb;max-width:34em}
+.map{display:block;width:100%;height:auto;margin:6px 0 4px}
+.map .ln{stroke:rgba(255,255,255,.28);stroke-width:1.5}
+.map .ln.on{stroke:var(--gold)}
+.map .orb{fill:none;stroke:rgba(255,255,255,.14);stroke-dasharray:3 6}
+.map .nd{fill:var(--blue-d);stroke:#fff;stroke-width:2;transition:fill .5s}
+.map .nd.on{fill:var(--gold);stroke:#fff6dc}
+.map text{fill:#fff;font:600 12px Montserrat,sans-serif}
+.map .me{fill:#fff}
+.map .me-t{fill:var(--blue);font-weight:800;font-size:15px}
+.map g{cursor:pointer}
+.prog{display:flex;align-items:center;gap:12px;font-size:14px;color:#dfe7fb;margin:6px 0 16px}
+.prog b{color:var(--gold);font-size:20px;white-space:nowrap}
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:14px 22px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-weight:600;font-size:16px;text-decoration:none;text-align:center;transition:transform .2s,opacity .2s}
+.btn:hover{transform:translateY(-2px)}
+.btn.gold{background:var(--gold);color:#fff}
+.btn.ghost{background:transparent;border:2px solid var(--head);color:var(--head)}
+.btn.light{background:#fff;color:var(--blue)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1 1 200px}
+/* cards */
+.card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-bottom:12px}
+.tcard{display:block;width:100%;text-align:left;border:0;background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:18px;margin-bottom:12px;color:var(--ink)}
+.tcard h3{color:var(--head);margin:6px 0 4px}
+.tcard p{font-size:15px;color:var(--muted);margin:0}
+.tcard .go{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-weight:600;font-size:14px;color:var(--head)}
+.tcard.own{background:var(--soft);box-shadow:none;border:2px solid var(--gold)}
+.tcard .done{color:var(--gold);font-weight:700}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.bd{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;background:var(--soft);color:var(--ink);white-space:nowrap}
+.bd.sci{background:#e3ecfb;color:#163f91}.bd.pop{background:#fbeee0;color:#8a5a14}.bd.intu{background:#f3e6f2;color:#7a2f72}.bd.pro{background:#e7f3ec;color:#1f6b45}.bd.own{background:var(--gold);color:#fff}
+.cat{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:0;background:var(--card);box-shadow:var(--shadow);border-radius:20px;padding:16px;margin-bottom:10px;color:var(--ink)}
+.cat .dot{flex:none;width:14px;height:14px;border-radius:50%;border:2px solid var(--gold)}
+.cat .dot.on{background:var(--gold)}
+.cat b{display:block;font-size:16px;color:var(--head)}
+.cat span{font-size:14px;color:var(--muted)}
+.cat i{margin-left:auto;font-style:normal;color:var(--gold);font-weight:700}
+.steps p{position:relative;padding-left:22px}
+.steps p::before{content:"";position:absolute;left:0;top:.55em;width:10px;height:10px;border-radius:50%;background:var(--gold)}
+.legend .bd{margin-right:4px}
+.cta{background:var(--blue);color:#fff;border-radius:24px;padding:22px}
+.cta h3{color:var(--gold);margin-bottom:8px}
+.cta p{color:#dfe7fb}
+.foot{font-size:13px;color:var(--muted);padding:8px 20px 20px}
+/* chips */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 20px 14px;scrollbar-width:none}
+.chip{flex:none;min-height:40px;padding:8px 16px;border-radius:20px;border:2px solid var(--line);background:var(--card);font-size:14px;font-weight:600}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.ghead{margin:22px 0 10px}
+.ghead b{display:block;font-size:18px;color:var(--head)}
+.ghead span{font-size:14px;color:var(--muted)}
+/* quiz */
+.qbar{display:flex;align-items:center;gap:12px;padding:6px 20px 0}
+.back{border:0;background:var(--soft);border-radius:14px;min-height:44px;padding:0 14px;font-weight:600;font-size:14px}
+.pbar{flex:1;height:8px;border-radius:8px;background:var(--line);overflow:hidden}
+.pbar>div{height:100%;background:var(--blue);transition:width .35s}
+.cnt{font-size:13px;color:var(--muted);white-space:nowrap}
+.qbox{background:var(--card);border-radius:24px;box-shadow:var(--shadow);padding:26px 20px;margin:18px 20px}
+.qtext{font-size:19px;font-weight:600;color:var(--head);line-height:1.45;margin-bottom:22px}
+.qlead{font-size:15px;color:var(--muted);margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;border:2px solid var(--soft);background:var(--soft);border-radius:18px;padding:18px 20px;margin-bottom:12px;font-size:16px;line-height:1.4;transition:all .2s}
+.opt:hover{border-color:var(--gold)}
+.opt.sel{background:var(--gold);border-color:var(--blue);color:#fff}
+.scale{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.scale button{min-height:50px;border-radius:12px;border:2px solid var(--soft);background:var(--soft);font-weight:700;color:var(--muted)}
+.scale button:hover{border-color:var(--gold);color:var(--ink)}
+.scale button.sel{background:var(--gold);border-color:var(--blue);color:#fff}
+.slab{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:8px}
+.intro .bd{margin-bottom:14px}
+.ibox{background:var(--soft);border:2px solid var(--gold);border-radius:16px;padding:18px;margin:16px 0 20px;font-style:italic}
+.meta{display:flex;gap:16px;font-size:14px;color:var(--muted);margin-top:8px}
+/* result */
+.score{display:flex;align-items:baseline;justify-content:center;gap:6px;margin:6px 0}
+.score b{font-size:clamp(44px,14vw,60px);color:var(--gold);line-height:1}
+.score span{font-size:20px;color:var(--muted)}
+.meter{height:10px;border-radius:10px;background:var(--line);overflow:hidden;margin:10px 0 18px}
+.meter>div{height:100%;background:linear-gradient(90deg,var(--gold),var(--blue))}
+.rtitle{text-align:center;color:var(--head);font-size:24px;margin:8px 0 14px}
+.tag{display:block;width:max-content;margin:0 auto 10px;background:var(--gold);color:#fff;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px}
+.vector{background:var(--blue);color:#fff;border-radius:20px;padding:20px;margin-top:16px}
+.vector strong{display:block;color:var(--gold);margin-bottom:6px}
+.ask{background:var(--soft);border-radius:20px;padding:18px;margin-top:14px}
+.ask strong{display:block;color:var(--gold);margin-bottom:6px}
+.lang{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.lang.top{border:3px solid var(--gold);background:var(--soft)}
+.lang .lt{display:flex;justify-content:space-between;font-weight:700;color:var(--head)}
+.lang .meter{margin:8px 0 6px;height:8px}
+.lang p{font-size:14px;color:var(--muted);margin:0}
+/* profile */
+.slot{display:block;margin-bottom:14px}
+.slot label{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:15px;margin-bottom:6px}
+.slot label a{font-weight:500;font-size:13px;white-space:nowrap}
+.slot input,textarea{width:100%;min-height:48px;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--bg);font-size:16px}
+.slot input:focus,textarea:focus{border-color:var(--gold);outline:none}
+textarea{min-height:120px;resize:vertical}
+.own-r{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.own-r:last-child{border-bottom:0}
+.own-r div{flex:1}
+.own-r b{display:block;font-size:15px}
+.own-r span{font-size:14px;color:var(--muted)}
+.own-r .v{color:var(--gold);font-weight:700;font-size:14px;text-align:right;max-width:45%}
+.own-r button{border:0;background:var(--soft);border-radius:12px;min-height:40px;padding:0 12px;font-weight:600;font-size:14px;color:var(--head)}
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,20,45,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:560px;margin:0 auto;max-height:88vh;overflow-y:auto;background:var(--bg);border-radius:28px 28px 0 0;padding:10px 20px calc(24px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .3s ease;z-index:50}
+.sheet.on{transform:none}
+.grab{width:44px;height:5px;border-radius:5px;background:var(--line);margin:4px auto 12px}
+.close{float:right;border:0;background:var(--soft);border-radius:50%;width:44px;height:44px;font-size:22px;line-height:1}
+.sheet h2{margin:6px 0 4px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:16px 0}
+.facts div{background:var(--card);border-radius:14px;padding:10px;font-size:13px;color:var(--muted)}
+.facts b{display:block;color:var(--ink);font-size:14px}
+.note{border-left:3px solid var(--red);padding:4px 0 4px 12px;margin:14px 0;font-size:15px}
+/* email form */
+.mail{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:20px;margin-top:16px;border:2px solid var(--gold)}
+.mail h3{color:var(--head);margin-bottom:6px}
+.mail .slot{margin:12px 0 0}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:14px 0;cursor:pointer}
+.chk input{width:22px;height:22px;flex:none;margin:1px 0 0;accent-color:var(--blue)}
+.fine{font-size:13px;color:var(--muted);margin:10px 0 0}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ok{background:var(--soft);border-radius:16px;padding:16px;font-weight:600}
+.err{color:var(--red);font-size:14px;margin-top:10px}
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs div{display:flex;width:100%;max-width:560px}
+.tabs button{flex:1;border:0;background:none;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:600;color:var(--muted)}
+.tabs button.on{color:var(--blue)}
+:root[data-theme=dark] .tabs button.on{color:var(--gold)}
+.tabs svg{width:24px;height:24px}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:all .25s;z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.fade{animation:fd .35s ease}
+@keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:600px){h1{font-size:40px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><a class="brand" href="#home">Life By Design</a><small>Карта самопознания</small></header>
+  <main id="view"></main>
+  <p class="foot">Все тесты в приложении - инструменты самопознания, а не психологическая диагностика. Ссылки ведут на сайты авторов тестов. Ваши ответы хранятся только в этом браузере. Результат попадает к нам, только если вы сами отправите его себе на почту.</p>
+</div>
+<nav class="tabs" aria-label="Навигация"><div>
+  <button data-t="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="3.5" r="1.5"/><circle cx="20" cy="16" r="1.5"/><circle cx="4" cy="16" r="1.5"/><path d="M12 9V5M14.6 13.5l4 1.8M9.4 13.5l-4 1.8"/></svg>Карта</button>
+  <button data-t="tests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Все тесты</button>
+  <button data-t="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Мой профиль</button>
+</div></nav>
+<div class="scrim" id="scrim"></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Описание теста"></section>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+{
+/* ===== НАСТРОЙКИ: вставьте ссылку на запись к вам (Calendly, форма, Instagram) ===== */
+const BOOK_URL = "";
+/* Адрес серверной функции подписки (Netlify). Форма показывается только на вашем сайте. */
+const SUBSCRIBE_URL = "/.netlify/functions/subscribe";
+const CAN_SUBSCRIBE = /^https?:$/.test(location.protocol) && !/claude|anthropic/.test(location.hostname);
+
+/* ===== Области карты ===== */
+const CATS = [
+  {id:"know",  short:"Личность", q:"Насколько я себя знаю?", sub:"Личность и самоосознанность"},
+  {id:"drive", short:"Мотивы",   q:"Что мной движет?",        sub:"Глубинные мотивы и страхи"},
+  {id:"base",  short:"Опора",    q:"На что я опираюсь?",      sub:"Самооценка и сильные стороны"},
+  {id:"grow",  short:"Рост",     q:"Как я расту и куда иду?", sub:"Мышление и призвание"},
+  {id:"love",  short:"Любовь",   q:"Как я люблю?",            sub:"Отношения и близость"},
+  {id:"energy",short:"Энергия",  q:"Энергия и интуиция",      sub:"Системы для размышления, не наука"}
+];
+const KIND = {sci:"Научный", pop:"Популярный", pro:"Профессиональный", intu:"Интуитивный", own:"Тест Life by Design"};
+
+/* ===== Официальные тесты (ссылки на первоисточники) ===== */
+const EXT = [
+  {id:"bigfive", cat:"know", name:"Big Five (Большая пятерка)", by:"bigfive-test.com, открытая версия IPIP", url:"https://bigfive-test.com", kind:"sci", time:"15 мин", price:"Бесплатно", lang:"Есть русский",
+   gives:"Самая проверенная модель личности в психологии. Показывает пять черт - открытость, добросовестность, экстраверсию, доброжелательность и эмоциональную стабильность - не как тип, а как шкалу.",
+   ask:"Какая из пяти черт помогает вам больше всего - и где она же иногда мешает?", slot:"bigfive", ph:"например: высокая открытость, средняя экстраверсия"},
+  {id:"p16", cat:"know", name:"16Personalities", by:"NERIS Analytics", url:"https://www.16personalities.com/ru", kind:"pop", time:"12 мин", price:"Бесплатно", lang:"Есть русский",
+   gives:"Самый популярный тест на 16 типов. Понятные описания, как вы принимаете решения, общаетесь и восстанавливаете силы.",
+   note:"Это не официальный MBTI. Тест основан на модели Big Five и только переводит результат в формат 16 типов.",
+   ask:"Что в описании вашего типа вы узнали сразу, а с чем хочется поспорить?", slot:"p16", ph:"например: INFJ-T"},
+  {id:"mbti", cat:"know", name:"MBTI (официальный)", by:"The Myers-Briggs Company", url:"https://www.mbtionline.com", kind:"pro", time:"20-30 мин", price:"Платно", lang:"Английский",
+   gives:"Оригинальный индикатор типов Майерс-Бриггс, основанный на идеях Юнга. Платная лицензионная методика с подробным отчетом.",
+   ask:"Как ваш тип проявляется на работе и дома - одинаково или по-разному?", slot:"mbti", ph:"например: ENFJ"},
+  {id:"rheti", cat:"drive", name:"Эннеаграмма RHETI", by:"The Enneagram Institute", url:"https://www.enneagraminstitute.com", kind:"pop", time:"40 мин", price:"$20", lang:"Английский",
+   gives:"Официальный тест Института Эннеаграммы: 144 пары утверждений и подробный отчет по трем ведущим типам. Эннеаграмма объясняет не что вы делаете, а почему.",
+   ask:"Какой страх вашего типа вы узнаете в своей жизни - и что он вам когда-то давал?", slot:"ennea", ph:"например: тип 2, крыло 3"},
+  {id:"truity", cat:"drive", name:"Эннеаграмма (бесплатная версия)", by:"Truity", url:"https://www.truity.com/test/enneagram-personality-test", kind:"pop", time:"10 мин", price:"Бесплатно", lang:"Английский",
+   gives:"Быстрый бесплатный вариант, чтобы впервые познакомиться со своим типом. Подробный отчет - за доплату.",
+   ask:"Какое желание вашего типа сейчас самое громкое?", slot:"ennea", ph:"например: тип 2, крыло 3"},
+  {id:"via", cat:"base", name:"VIA - сильные стороны характера", by:"VIA Institute on Character", url:"https://www.viacharacter.org", kind:"sci", time:"15 мин", price:"Бесплатно", lang:"Есть русский",
+   gives:"Научно проверенный тест позитивной психологии. Ранжирует 24 сильные стороны характера - от любопытства до доброты.",
+   ask:"Какую из ваших топ-5 сильных сторон вы сейчас почти не используете?", slot:"via", ph:"ваши топ-5 сильных сторон"},
+  {id:"clifton", cat:"base", name:"CliftonStrengths", by:"Gallup", url:"https://www.gallup.com/cliftonstrengths", kind:"pro", time:"35 мин", price:"$24.99-59.99", lang:"Много языков",
+   gives:"Известный тест на таланты от Gallup. Показывает ваши 5 (или все 34) природных таланта и как превратить их в силу на работе.",
+   ask:"Какой из ваших талантов люди замечают раньше, чем вы сами?", slot:"clifton", ph:"ваши топ-5 талантов"},
+  {id:"onet", cat:"grow", name:"O*NET Interest Profiler", by:"Министерство труда США (My Next Move)", url:"https://www.mynextmove.org/explore/ip", kind:"sci", time:"10 мин", price:"Бесплатно", lang:"Англ. / исп.",
+   gives:"Бесплатный тест профессиональных интересов по модели Холланда (RIASEC) и подбор профессий с реальными данными рынка труда США. Особенно полезен при смене карьеры.",
+   ask:"Какие из предложенных профессий вызвали у вас неожиданный интерес?", slot:"onet", ph:"например: код SAE"},
+  {id:"ll5", cat:"love", name:"5 языков любви (официальный)", by:"Гэри Чепмен, 5lovelanguages.com", url:"https://5lovelanguages.com/quizzes/love-language", kind:"pop", time:"10 мин", price:"Бесплатно", lang:"Английский",
+   gives:"Оригинальный тест автора книги \"Пять языков любви\". Хорошо сравнить с вашим результатом в нашем тесте.",
+   ask:"Совпал ли результат с нашим тестом? Если нет - что изменилось в вашей жизни?", slot:"ll5", ph:"например: качественное время"},
+  {id:"hd", cat:"energy", name:"Дизайн Человека", by:"Jovian Archive - официальный источник", url:"https://www.jovianarchive.com/Get_Your_Chart", kind:"intu", time:"2 мин", price:"Бесплатно", lang:"Английский",
+   gives:"Бесплатный расчет вашей карты (бодиграфа) по дате, времени и месту рождения. Покажет ваш тип, стратегию и авторитет.",
+   note:"Нужно точное время рождения. Это не научная система - используйте ее как повод для размышления.",
+   ask:"Если ваша стратегия верна, где в жизни вы сейчас действуете вопреки ей?", slot:"hd", ph:"например: Генератор, профиль 2/4"},
+  {id:"astro", cat:"energy", name:"Натальная карта", by:"Astrodienst, astro.com", url:"https://www.astro.com/cgi/chart.cgi?lang=ru", kind:"intu", time:"5 мин", price:"Бесплатно", lang:"Есть русский",
+   gives:"Один из старейших и самых точных бесплатных расчетов натальной карты.",
+   note:"Ссылка ведет прямо на страницу бесплатной карты. Нажмите \"Введите данные о рождении\" - понадобятся дата, время и место рождения. Это не научная система - для тех, кому близка астрология как язык метафор.",
+   ask:"Какой образ из вашей карты хочется взять с собой как метафору?", slot:"astro", ph:"Солнце, Луна, Асцендент"}
+];
+
+/* ===== Квизы Life by Design ===== */
+const LOVE = {
+  A:{t:"Слова одобрения", d:"Признание, комплименты и слова поддержки."},
+  B:{t:"Качественное время", d:"Внимание без остатка и совместные дела."},
+  C:{t:"Получение подарков", d:"Знаки внимания, в которых видна забота."},
+  D:{t:"Акты помощи", d:"Действия, которые облегчают вашу жизнь."},
+  E:{t:"Прикосновения", d:"Физическая близость, объятия и нежность."}
+};
+const OWN = {
+  aware:{cat:"know", type:"scale", title:"Насколько я самоосознанна?", time:"3 мин",
+    intro:"Инструмент для тех, кто проектирует свою жизнь осознанно.",
+    how:"Оцените каждое утверждение от 1 (неверно) до 7 (верно).", next:["bigfive","via"],
+    ask:"Какое из десяти утверждений отозвалось сильнее всего - и почему именно оно?",
+    qs:["У меня есть четко определенная цель, и я принимаю осознанные решения в соответствии с ней.","Я знаю, чего хочу от жизни; у меня есть четкие личные и профессиональные цели.","Я могу описать свою идеальную рабочую среду.","Я понимаю, чем я по-настоящему увлечена.","Я четко понимаю, в каких ситуациях я чувствую наибольшее удовлетворение.","Мои ценности определяют то, как я взаимодействую с миром.","Я вижу закономерности в своем поведении.","Когда я терплю неудачу, я обычно могу понять, что именно я сделала не так.","В целом, я считаю, что даю точную оценку своей собственной эффективности.","Я осознаю, какое влияние я оказываю на окружающих."]},
+  esteem:{cat:"base", type:"choice", title:"Шкала самооценки Розенберга", by:"Моррис Розенберг · 1965", time:"3 мин",
+    intro:"Один из самых надёжных психологических тестов самооценки, который используют по всему миру уже более 60 лет.",
+    how:"10 утверждений. Для каждого честно выбери один из четырёх вариантов ответа. Здесь нет правильных или неправильных ответов - только твоя внутренняя правда.", next:["via","clifton"],
+    ask:"Что бы вы сделали по-другому на этой неделе, если бы относились к себе с полным уважением?",
+    opts:["Полностью согласна","Скорее согласна","Скорее не согласна","Совсем не согласна"],
+    qs:[["Я чувствую, что я достойный человек.",1],["Иногда мне кажется, что я ничего не стою.",0],["У меня есть хорошие качества.",1],["Я способна делать многое не хуже других.",1],["Мне часто не хватает уверенности в себе.",0],["Иногда я чувствую себя бесполезной.",0],["В целом я довольна собой.",1],["Иногда я думаю, что я неудачница.",0],["У меня есть чувство, что я не горжусь собой.",0],["Я отношусь к себе с уважением.",1]]},
+  mindset:{cat:"grow", type:"multi", title:"Тест на тип мышления", time:"4 мин",
+    intro:"Установка на данность или мышление роста? Узнайте, как вы встречаете ошибки, критику и новые вызовы.",
+    how:"Выберите вариант, который ближе всего к вашей первой, честной реакции.", next:["via","onet"],
+    ask:"Где в вашей жизни сейчас есть задача, за которую вы не беретесь из страха ошибиться?",
+    qs:[["Вы долго тренировались для забега, но результат оказался хуже, чем в прошлом году. О чем вы подумаете?",["Наверное, я достигла своего предела способностей","Главное - участие, результат для меня не так важен","Нужно пересмотреть график тренировок и питания","Это отличный урок, теперь я знаю свои слабые места"]],
+      ["Предстоит задача, которую вы никогда раньше не делали. Ваша первая мысль?",["Это не для меня, нет способностей","Попробую, но если не выйдет сразу - брошу","Сложно, но интересно разобраться","Отличный шанс вырасти!"]],
+      ["Как вы реагируете на критику вашей работы?",["Принимаю на свой счет и расстраиваюсь","Оправдываюсь и защищаюсь","Слушаю, чтобы понять, что улучшить","Благодарна за урок - это путь к росту"]],
+      ["Успех других людей в вашей сфере...",["Заставляет чувствовать себя неудачницей","Вызывает легкую зависть","Заставляет задуматься об их методах","Вдохновляет и дает энергию"]],
+      ["Если вы совершили серьезную ошибку:",["Скрываю ее или виню обстоятельства","Чувствую стыд за некомпетентность","Признаю и исправляю","Анализирую, чтобы не повторять"]],
+      ["Прикладывать большие усилия для результата - это:",["Признак отсутствия таланта","Необходимое зло","Путь к профессионализму","Единственный способ достичь мастерства"]],
+      ["Можно ли развить интеллект?",["Нет, это дано от рождения","Немного, но база остается прежней","Да, если много учиться","Конечно, мозг - это мышца"]],
+      ["Вам предлагают вызов, где можно провалиться, но многому научиться:",["Откажусь в пользу безопасного варианта","Скорее всего, выберу то, где точно блесну","Попробую, если риск умеренный","Выберу вызов!"]],
+      ["Препятствия на пути к цели обычно...",["Останавливают меня","Портят настроение и демотивируют","Заставляют искать обходной путь","Делают меня сильнее"]],
+      ["Что для вас означает \"провал\"?",["Приговор способностям","Досадная неудача","Повод сменить стратегию","Ценнейший опыт"]]]},
+  love:{cat:"love", type:"pair", title:"Ваш язык любви", by:"По мотивам книги Гэри Чепмена", time:"6 мин",
+    intro:"Узнайте, через что вы по-настоящему чувствуете любовь - и расскажите об этом близкому человеку.",
+    how:"Сравнивайте именно эти два варианта между собой и выбирайте то, что кажется более важным именно ВАМ. Слушайте свой внутренний отклик.", next:["ll5","rheti"],
+    ask:"Знает ли ваш близкий человек ваш ведущий язык любви? А вы - его?",
+    qs:[["…я получаю от любимого человека записку, сообщение или письмо без особого повода.","A","…мы обнимаемся.","E"],["…я могу провести время с партнером наедине, только вдвоем.","B","…партнер делает что-то практическое, чтобы помочь мне.","D"],["…партнер дарит мне небольшой подарок в знак нашей любви.","C","…мы проводим свободное время вместе, и нас никто не отвлекает.","B"],["…партнер неожиданно делает что-то для меня - например, заправляет машину или занимается стиркой.","D","…мы прикасаемся друг к другу.","E"],["…партнер обнимает меня при других людях.","E","…партнер делает мне подарок-сюрприз.","C"],["…я нахожусь рядом с партнером, даже если мы ничем особым не заняты.","B","…мы держимся за руки.","E"],["…партнер дарит мне подарок.","C","…я слышу от партнера слова \"Я тебя люблю\".","A"],["…я сижу рядом с любимым человеком.","E","…партнер делает мне комплимент просто так.","A"],["…я могу просто \"потусить\" вместе с партнером.","B","…я неожиданно получаю от него/нее маленькие подарки.","C"],["…я слышу: \"Я горжусь тобой\".","A","…партнер помогает мне с каким-то делом или задачей.","D"],["…я занимаюсь чем-то вместе с партнером.","B","…я слышу от партнера слова поддержки.","A"],["…партнер делает что-то для меня, а не просто говорит приятные слова.","D","…я чувствую нашу связь через объятия.","E"],["…я слышу похвалу от любимого человека.","A","…партнер дарит мне что-то, в чем видно, что обо мне по-настоящему думали.","C"],["…я просто нахожусь рядом с партнером.","B","…партнер делает мне массаж спины или плеч.","E"],["…партнер искренне радуется моим достижениям.","A","…партнер делает для меня то, что ему/ей не очень-то и нравится.","D"],["…мы часто целуемся.","E","…я чувствую, что партнер проявляет интерес к тому, что важно для меня.","B"],["…партнер помогает мне в делах или проектах, которые мне нужно закончить.","D","…партнер дарит мне какой-то вдохновляющий подарок.","C"],["…партнер делает мне комплимент по поводу моей внешности.","A","…партнер находит время, чтобы выслушать меня и понять мои чувства.","B"],["…мы проявляем нежность друг к другу на людях.","E","…партнер предлагает выполнить за меня какие-то поручения.","D"],["…партнер берет на себя чуть больше домашних или рабочих обязанностей, чем обычно.","D","…я получаю подарок, в который партнер вложил особую душу.","C"],["…партнер не отвлекается на телефон, пока мы разговариваем.","B","…партнер делает что-то сверх своих обычных дел, чтобы снять с меня нагрузку.","D"],["…я с нетерпением жду праздника, потому что, скорее всего, получу подарок.","C","…я слышу слова: \"Я ценю тебя\".","A"],["…партнер привозит мне небольшой подарок из поездки, в которой был(а) без меня.","C","…партнер берет на себя мои обязанности, когда я в стрессе и не справляюсь.","D"],["…партнер не перебивает меня, когда я говорю.","B","…обмен подарками - важная часть наших отношений.","C"],["…партнер помогает мне, когда видит, что я без сил.","D","…мы ходим куда-то вместе, проводя время только вдвоем.","B"],["…мы близки физически.","E","…партнер приносит мне маленький подарок, который случайно купил(а) в течение дня.","C"],["…партнер говорит мне что-то ободряющее.","A","…мы занимаемся чем-то вместе, разделяя общее хобби или дело.","B"],["…партнер удивляет меня небольшим знаком внимания.","C","…мы часто прикасаемся друг к другу в течение дня.","E"],["…партнер помогает мне, даже если он(а) очень занят(а).","D","…я слышу слова: \"Ты для меня очень много значишь\".","A"],["…мы крепко обнимаемся после разлуки.","E","…я слышу от партнера, насколько я важен/важна в его/ее жизни.","A"]]}
+};
+const OWN_IDS = ["aware","esteem","mindset","love"];
+
+/* ===== Профильные поля для внешних тестов ===== */
+const SLOTS = [
+  ["bigfive","Big Five","bigfive"],["p16","16Personalities","p16"],["mbti","MBTI","mbti"],["ennea","Эннеаграмма","rheti"],
+  ["via","VIA: сильные стороны","via"],["clifton","CliftonStrengths","clifton"],["onet","Код RIASEC","onet"],
+  ["ll5","Язык любви (официальный)","ll5"],["hd","Дизайн Человека","hd"],["astro","Натальная карта","astro"]
+];
+
+/* ===== Хранилище (только в этом браузере) ===== */
+const KEY = "lbd-map-v1";
+let S = {own:{}, ext:{}, notes:""};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch(e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} };
+
+const $ = s => document.querySelector(s);
+const view = $("#view");
+const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const extById = id => EXT.find(t => t.id === id);
+const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 1800); };
+const catDone = c => OWN_IDS.some(id => OWN[id].cat === c && S.own[id]) || EXT.some(t => t.cat === c && (S.ext[t.slot] || "").trim());
+const doneCount = () => CATS.filter(c => catDone(c.id)).length;
+const badges = t => `<div class="badges"><span class="bd ${t.kind}">${KIND[t.kind]}</span><span class="bd">${t.price}</span><span class="bd">${t.time}</span><span class="bd">${t.lang}</span></div>`;
+const extCard = t => `<button class="tcard" data-ext="${t.id}">${badges(t)}<h3>${t.name}</h3><p>${t.gives.split(". ")[0]}.</p><div class="go"><span class="muted">${t.by}</span><span>${(S.ext[t.slot]||"").trim() ? '<span class="done">Записано</span>' : "Подробнее"}</span></div></button>`;
+const ownCard = id => { const q = OWN[id], r = S.own[id];
+  return `<button class="tcard own" data-go="quiz-${id}"><div class="badges"><span class="bd own">${KIND.own}</span><span class="bd">${q.time}</span><span class="bd">${q.qs.length} вопросов</span></div><h3>${q.title}</h3><p>${q.intro}</p><div class="go">${r ? `<span class="done">${esc(r.title)}</span><span>Пройти заново</span>` : `<span></span><span>Пройти здесь</span>`}</div></button>`; };
+
+/* ===== Карта ===== */
+function mapSVG() {
+  const cx = 170, cy = 112, P = [[170,32],[248,72],[248,152],[170,192],[92,152],[92,72]];
+  const L = [[170,16,"middle"],[264,76,"start"],[264,156,"start"],[170,214,"middle"],[76,156,"end"],[76,76,"end"]];
+  return `<svg class="map" viewBox="0 0 340 226" role="img" aria-label="Карта самопознания: открыто ${doneCount()} из 6 областей">
+    <ellipse class="orb" cx="${cx}" cy="${cy}" rx="78" ry="80"/>
+    ${CATS.map((c,i) => `<line class="ln ${catDone(c.id)?"on":""}" x1="${cx}" y1="${cy}" x2="${P[i][0]}" y2="${P[i][1]}"/>`).join("")}
+    <circle class="me" cx="${cx}" cy="${cy}" r="24"/><text class="me-t" x="${cx}" y="${cy+5}" text-anchor="middle">Я</text>
+    ${CATS.map((c,i) => `<g data-go="cat-${c.id}" tabindex="0" role="link" aria-label="${c.q}"><circle class="nd ${catDone(c.id)?"on":""}" cx="${P[i][0]}" cy="${P[i][1]}" r="11"/><text x="${L[i][0]}" y="${L[i][1]}" text-anchor="${L[i][2]}">${c.short}</text></g>`).join("")}
+  </svg>`;
+}
+function ctaBlock() {
+  return `<div class="cta"><h3>Соберите результаты в одну картину</h3><p>Тесты дают кусочки пазла. На сессии мы соединим их и превратим в план для вашей жизни по собственному дизайну.</p>
+  ${BOOK_URL ? `<a class="btn gold" href="${BOOK_URL}" target="_blank" rel="noopener">Записаться на разбор</a>` : `<p><b style="color:#fff">Напишите Тане, чтобы записаться на разбор результатов.</b></p>`}</div>`;
+}
+
+/* ===== Экраны ===== */
+function home() {
+  const nextOwn = OWN_IDS.find(id => !S.own[id]);
+  view.innerHTML = `<section class="hero fade">
+    <h1>Узнайте себя по своему дизайну</h1>
+    <p>Лучшие тесты самопознания в одном месте - с объяснением, что каждый дает, и ссылкой на первоисточник.</p>
+    ${mapSVG()}
+    <div class="prog"><b>${doneCount()} / 6</b> областей карты открыто. Нажмите на точку, чтобы перейти к ней.</div>
+    <button class="btn light" data-go="${nextOwn ? "quiz-"+nextOwn : "profile"}">${nextOwn ? "Начать с теста Life by Design" : "Посмотреть мою карту"}</button>
+  </section>
+  <section class="band"><h2>Начните здесь</h2><p class="muted">Короткие тесты Life by Design. Проходятся прямо в приложении, а после каждого вы узнаете, какой официальный тест пройти дальше.</p>${OWN_IDS.map(ownCard).join("")}</section>
+  <section class="band" style="padding-top:0"><h2>Выберите свой вопрос</h2>${CATS.map(c => `<button class="cat" data-go="cat-${c.id}"><span class="dot ${catDone(c.id)?"on":""}"></span><span><b>${c.q}</b><span>${c.sub}</span></span><i>›</i></button>`).join("")}</section>
+  <section class="band steps" style="padding-top:0"><h2>Как это работает</h2>
+    <p><b>Выберите вопрос,</b> который волнует вас сейчас, а не тест "по моде".</p>
+    <p><b>Пройдите тест</b> у нас или на официальном сайте автора и запишите результат в свой профиль.</p>
+    <p><b>Ответьте на вопрос коуча</b> после теста - именно здесь начинается настоящее самопознание.</p>
+    <div class="card legend" style="margin-top:14px"><p style="margin-bottom:10px"><b>Метки надежности</b></p>
+      <p class="muted" style="font-size:14px"><span class="bd sci">Научный</span> проверен исследованиями</p>
+      <p class="muted" style="font-size:14px"><span class="bd pro">Профессиональный</span> платная лицензионная методика</p>
+      <p class="muted" style="font-size:14px"><span class="bd pop">Популярный</span> полезная типология, но не научный инструмент</p>
+      <p class="muted" style="font-size:14px;margin:0"><span class="bd intu">Интуитивный</span> система для размышления, а не измерение</p></div>
+  </section>
+  <section class="band" style="padding-top:0">${ctaBlock()}</section>`;
+}
+
+let filter = "all";
+function tests() {
+  const F = [["all","Все"],["free","Бесплатные"],["sci","Научные"],["pop","Популярные"],["intu","Интуитивные"],["own","Life by Design"]];
+  const okExt = t => filter==="all" || (filter==="free" ? t.price==="Бесплатно" : filter==="sci" ? (t.kind==="sci"||t.kind==="pro") : t.kind===filter);
+  const okOwn = filter==="all" || filter==="free" || filter==="own" || filter==="sci" && false;
+  view.innerHTML = `<section class="band fade" style="padding-bottom:12px"><h1 style="color:var(--head);font-size:30px">Все тесты</h1><p class="muted" style="margin-top:8px">${EXT.length + OWN_IDS.length} тестов в шести областях. Внешние ссылки ведут только на сайты авторов.</p></section>
+  <div class="chips" role="tablist">${F.map(f => `<button class="chip ${filter===f[0]?"on":""}" data-f="${f[0]}">${f[1]}</button>`).join("")}</div>
+  <section class="band" style="padding-top:0">${CATS.map(c => {
+    const own = okOwn ? OWN_IDS.filter(id => OWN[id].cat===c.id).map(ownCard) : [];
+    const ext = filter==="own" ? [] : EXT.filter(t => t.cat===c.id && okExt(t)).map(extCard);
+    if (!own.length && !ext.length) return "";
+    return `<div class="ghead"><b>${c.q}</b><span>${c.sub}</span></div>${own.join("")}${ext.join("")}`; }).join("")}</section>`;
+}
+
+function cat(id) {
+  const c = CATS.find(x => x.id===id); if (!c) return home();
+  view.innerHTML = `<section class="band fade"><button class="back" data-go="home">‹ Карта</button>
+    <h1 style="color:var(--head);font-size:30px;margin-top:16px">${c.q}</h1><p class="muted" style="margin:8px 0 18px">${c.sub}</p>
+    ${id==="energy" ? `<p class="note">Эти системы не имеют научного подтверждения. Многим они помогают взглянуть на себя по-новому - относитесь к ним как к метафоре, а не к факту.</p>` : ""}
+    ${OWN_IDS.filter(q => OWN[q].cat===id).map(ownCard).join("")}${EXT.filter(t => t.cat===id).map(extCard).join("")}</section>`;
+}
+
+function profile() {
+  const filled = SLOTS.filter(s => (S.ext[s[0]]||"").trim()).length + OWN_IDS.filter(id => S.own[id]).length;
+  view.innerHTML = `<section class="hero fade"><h1>Моя карта</h1><p>Здесь собираются все ваши результаты. Принесите их на сессию - и мы увидим общую картину.</p>${mapSVG()}<div class="prog"><b>${filled}</b> результатов сохранено</div></section>
+  <section class="band"><h2>Тесты Life by Design</h2><div class="card">${OWN_IDS.map(id => { const r = S.own[id];
+    return `<div class="own-r"><div><b>${OWN[id].title}</b><span>${r ? new Date(r.date).toLocaleDateString("ru-RU") : "Еще не пройден"}</span></div>${r ? `<span class="v">${esc(r.title)}</span>` : `<button data-go="quiz-${id}">Пройти</button>`}</div>`; }).join("")}</div></section>
+  <section class="band" style="padding-top:0"><h2>Результаты официальных тестов</h2><p class="muted">Прошли тест на сайте автора? Запишите результат здесь своими словами.</p>
+    <div class="card">${SLOTS.map(s => `<div class="slot"><label for="s-${s[0]}">${s[1]} <a href="#" data-ext="${s[2]}">о тесте</a></label><input id="s-${s[0]}" data-slot="${s[0]}" placeholder="${esc(extById(s[2]).ph)}" value="${esc(S.ext[s[0]]||"")}"></div>`).join("")}</div></section>
+  <section class="band" style="padding-top:0"><h2>Мои инсайты</h2><div class="card"><label for="notes" class="muted" style="display:block;font-size:14px;margin-bottom:8px">Что нового вы о себе узнали? Что повторяется в разных тестах?</label><textarea id="notes" placeholder="Например: в трех тестах я вижу, что мне важно...">${esc(S.notes)}</textarea></div>
+    <div class="row"><button class="btn" id="copy">Скопировать мою карту</button><button class="btn ghost" id="wipe">Очистить всё</button></div></section>
+  <section class="band" style="padding-top:0">${ctaBlock()}</section>`;
+  view.querySelectorAll("[data-slot]").forEach(i => i.addEventListener("input", () => { S.ext[i.dataset.slot] = i.value; save(); }));
+  $("#notes").addEventListener("input", e => { S.notes = e.target.value; save(); });
+  $("#copy").addEventListener("click", async () => {
+    const lines = ["Моя карта самопознания - Life by Design", ""];
+    OWN_IDS.forEach(id => S.own[id] && lines.push(`${OWN[id].title}: ${S.own[id].title}${S.own[id].score!=null ? ` (${S.own[id].score}/${S.own[id].max})` : ""}`));
+    SLOTS.forEach(s => (S.ext[s[0]]||"").trim() && lines.push(`${s[1]}: ${S.ext[s[0]].trim()}`));
+    if (S.notes.trim()) lines.push("", "Мои инсайты:", S.notes.trim());
+    try { await navigator.clipboard.writeText(lines.join("\n")); toast("Карта скопирована"); } catch(e) { toast("Не удалось скопировать"); }
+  });
+  const w = $("#wipe"); w.addEventListener("click", () => {
+    if (w.dataset.sure) { S = {own:{}, ext:{}, notes:""}; save(); profile(); toast("Все данные удалены"); }
+    else { w.dataset.sure = 1; w.textContent = "Точно удалить всё?"; setTimeout(() => { if (w.isConnected) { delete w.dataset.sure; w.textContent = "Очистить всё"; } }, 3500); }
+  });
+}
+
+/* ===== Шторка с описанием теста ===== */
+function openSheet(id) {
+  const t = extById(id); if (!t) return;
+  const sh = $("#sheet");
+  sh.innerHTML = `<div class="grab"></div><button class="close" id="x" aria-label="Закрыть">×</button>${badges(t)}<h2>${t.name}</h2><p class="muted" style="font-size:14px">${t.by}</p>
+    <div class="facts"><div>Время<b>${t.time}</b></div><div>Цена<b>${t.price}</b></div><div>Язык<b>${t.lang}</b></div></div>
+    <p><b>Что дает этот тест</b></p><p>${t.gives}</p>${t.note ? `<p class="note">${t.note}</p>` : ""}
+    <div class="ask"><strong>Вопрос коуча после теста</strong>${t.ask}</div>
+    <a class="btn" style="margin:18px 0" href="${t.url}" target="_blank" rel="noopener">Пройти на официальном сайте ↗</a>
+    <div class="slot"><label for="sheet-in">Мой результат</label><input id="sheet-in" placeholder="${esc(t.ph)}" value="${esc(S.ext[t.slot]||"")}"></div>
+    <button class="btn ghost" id="sv">Сохранить в профиль</button>`;
+  $("#sv").addEventListener("click", () => { S.ext[t.slot] = $("#sheet-in").value; save(); closeSheet(); toast("Сохранено в профиль"); route(); });
+  $("#x").addEventListener("click", closeSheet);
+  sh.classList.add("on"); $("#scrim").classList.add("on"); sh.scrollTop = 0;
+  setTimeout(() => $("#x").focus(), 50);
+}
+function closeSheet() { $("#sheet").classList.remove("on"); $("#scrim").classList.remove("on"); }
+$("#scrim").addEventListener("click", closeSheet);
+document.addEventListener("keydown", e => { if (e.key==="Escape") closeSheet(); });
+
+/* ===== Прохождение квиза ===== */
+let Q = null;
+function quiz(id) {
+  const q = OWN[id]; if (!q) return home();
+  Q = {id, i:-1, ans:[]};
+  drawQuiz();
+}
+function drawQuiz() {
+  const q = OWN[Q.id], n = q.qs.length, i = Q.i;
+  if (i < 0) {
+    view.innerHTML = `<section class="band fade intro"><button class="back" data-go="home">‹ Карта</button><div style="margin-top:18px"><span class="bd own">${KIND.own}</span></div>
+      ${q.by ? `<p class="muted" style="font-size:14px;margin:0 0 4px">${q.by}</p>` : ""}<h1 style="color:var(--head)">${q.title}</h1><p style="margin-top:12px">${q.intro}</p>
+      <div class="meta"><span>${n} вопросов</span><span>${q.time}</span></div><div class="ibox">${q.how}</div>
+      <button class="btn" id="start">Начать тест</button></section>`;
+    $("#start").addEventListener("click", () => { Q.i = 0; drawQuiz(); });
+    return;
+  }
+  if (i >= n) return showResult();
+  const head = `<div class="qbar"><button class="back" id="prev">‹ Назад</button><div class="pbar"><div style="width:${i/n*100}%"></div></div><span class="cnt">${i+1} / ${n}</span></div>`;
+  let body = "";
+  if (q.type==="scale") body = `<div class="qtext">${q.qs[i]}</div><div class="scale">${[1,2,3,4,5,6,7].map(v => `<button data-a="${v}" aria-label="${v} из 7">${v}</button>`).join("")}</div><div class="slab"><span>Неверно</span><span>Верно</span></div>`;
+  if (q.type==="choice") body = `<div class="qtext">${q.qs[i][0]}</div>${q.opts.map((o,k) => `<button class="opt" data-a="${q.qs[i][1] ? 3-k : k}">${o}</button>`).join("")}`;
+  if (q.type==="multi") body = `<div class="qtext">${q.qs[i][0]}</div>${q.qs[i][1].map((o,k) => `<button class="opt" data-a="${k+1}">${o}</button>`).join("")}`;
+  if (q.type==="pair") body = `<div class="qlead">Для меня особенно ценно, когда…</div><button class="opt" data-a="${q.qs[i][1]}">${q.qs[i][0]}</button><button class="opt" data-a="${q.qs[i][3]}">${q.qs[i][2]}</button>`;
+  view.innerHTML = head + `<div class="qbox fade">${body}</div>`;
+  $("#prev").addEventListener("click", () => { if (Q.i > 0) Q.ans.pop(); Q.i--; drawQuiz(); });
+  view.querySelectorAll("[data-a]").forEach(b => b.addEventListener("click", () => {
+    b.classList.add("sel"); view.querySelectorAll("[data-a]").forEach(x => x.disabled = true);
+    Q.ans.push(isNaN(b.dataset.a) ? b.dataset.a : +b.dataset.a); Q.i++; setTimeout(drawQuiz, 220);
+  }));
+}
+
+function grade(id, ans) {
+  const sum = ans.reduce((a,b) => a+(+b||0), 0);
+  if (id==="aware") {
+    const r = sum<=30 ? ["Искатель (The Seeker)","Вы находитесь на этапе открытий. Ваша жизнь - это чистый холст, и сейчас лучшее время, чтобы начать прислушиваться к своим внутренним сигналам и проектировать свое будущее осознанно."]
+      : sum<=50 ? ["Пробужденный (The Emerging Aware)","Вы уже хорошо чувствуете свой ритм. У вас есть база, на которую можно опереться, но в некоторых сферах дизайн вашей жизни еще требует калибровки для полной гармонии."]
+      : ["Внутренний Исследователь (The Introspector)","Вы - мастер своего внутреннего мира. Ваши действия и ценности находятся в глубоком резонансе, что позволяет вам не просто жить, а созидать свою реальность с полной ясностью."];
+    return {score:sum, min:10, max:70, title:r[0], text:r[1]};
+  }
+  if (id==="esteem") {
+    const r = sum>=25 ? ["Высокая самооценка","Вы принимаете себя такой, какая вы есть. Внутренний голос поддерживает вас, а не разрушает. Вы способны признавать свои ошибки, не разрушаясь от этого. Это редкий и ценный внутренний ресурс.","Ваша задача сейчас - сохранять эту внутреннюю опору, особенно в моменты стресса и перемен. Самооценка - не данность, а навык. Окружайте себя людьми, которые видят вас такой же, какой вы видите себя. Делитесь своей силой с теми, кому это нужно."]
+      : sum>=15 ? ["Средняя самооценка","В целом вы справляетесь и принимаете себя, но бывают моменты сомнения и самокритики. Это совершенно нормально - большинство людей живут именно в этом диапазоне. Главное, что у вас есть база для роста.","Обратите внимание на то, в какие моменты ваша самооценка падает. Это сигнал, а не приговор. Начните замечать, что именно \"подтачивает\" вас изнутри - и вы уже сделаете первый шаг к изменению."]
+      : ["Низкая самооценка","Внутренний критик занимает слишком много места. Вы склонны сомневаться в своей ценности и, возможно, зависеть от мнения других. Это не ваш характер - это усвоенный паттерн. А паттерны меняются.","Первый шаг - осознать, что низкая самооценка - это не факт о вас, а убеждение о себе. Убеждения меняются. Позвольте себе исследовать, откуда берётся этот голос внутри. Возможно, именно сейчас - время начать этот путь."];
+    return {score:sum, min:0, max:30, title:r[0], text:r[1], vector:r[2]};
+  }
+  if (id==="mindset") {
+    const r = sum<=15 ? ["Установка на данность (Fixed Mindset)","Вы склонны воспринимать свои таланты, интеллект и характер как нечто фиксированное - то, что дано от рождения и не подлежит серьезным изменениям. Для вас успех - это подтверждение того, что вы \"умная\" или \"талантливая\", а любая неудача кажется приговором вашим способностям. Из-за этого вы можете избегать сложных задач, чтобы не рисковать своим статусом эксперта.","Ваш потенциал сейчас заперт в \"золотой клетке\" комфорта. Начните разрешать себе быть новичком. Помните: мозг - это мышца, и она растет только тогда, когда вам тяжело. Ошибка - это не признак глупости, это просто информация о том, что нужно попробовать другой метод."]
+      : sum<=25 ? ["Склонность к установке на данность","Вы находитесь на распутье. Вы уже понимаете ценность саморазвития, но глубоко внутри всё еще боитесь, что ошибка обнажит вашу \"некомпетентность\". Вы часто выбираете безопасные пути и можете испытывать дискомфорт, когда другие добиваются успеха быстрее вас. Вы тратите много энергии на то, чтобы казаться успешной, вместо того чтобы просто расти.","Перестаньте фокусироваться на результате и начните праздновать свои усилия. Попробуйте взяться за проект, в котором вы заведомо не лучшая. Ваша задача - научиться получать удовольствие от самого процесса преодоления, а не только от похвалы окружающих."]
+      : sum<=35 ? ["Склонность к мышлению роста (Growth Mindset)","Отличный результат! Вы уже осознанно используете философию созидания. Вы воспринимаете трудности как интересные задачи, а критику - как бесплатный коучинг. Вы понимаете, что мастерство требует времени и усилий, и не боитесь инвестировать в себя. Вы уже умеете превращать неудачи в трамплины для следующего прыжка.","Вы почти у цели. Чтобы закрепить этот результат, начните осознанно искать \"зоны дискомфорта\". Окружайте себя людьми, которые сильнее вас - пусть их успех будет для вас не угрозой, а наглядной картой того, куда можно двигаться дальше. Вы уже на пути к созданию своей реальности по собственному дизайну."]
+      : ["Сильное мышление роста (Strong Growth Mindset)","Поздравляем! Вы - истинный воплотитель философии Life by Design. Вы не просто принимаете изменения, вы их создаете. Для вас нет понятия \"провал\" - существует только \"обратная связь\". Вы обладаете редкой способностью видеть возможности там, где другие видят тупик. Ваш интеллект и способности для вас - это глина, из которой вы каждый день лепите лучшую версию себя.","На этом уровне ваша главная задача - стать ролевой моделью и вдохновителем для других. Делитесь своим подходом, помогайте окружающим менять их ограничивающие убеждения. Ваша энергия созидания способна менять не только вашу жизнь, но и мир вокруг вас."];
+    return {score:sum, min:10, max:40, title:r[0], text:r[1], vector:r[2]};
+  }
+  const c = {A:0,B:0,C:0,D:0,E:0}; ans.forEach(k => c[k]++);
+  const sorted = Object.keys(c).sort((a,b) => c[b]-c[a]);
+  return {counts:c, sorted, title: LOVE[sorted[0]].t + " и " + LOVE[sorted[1]].t.toLowerCase()};
+}
+
+function showResult() {
+  const id = Q.id, q = OWN[id], r = grade(id, Q.ans);
+  S.own[id] = {title:r.title, score:r.score ?? null, max:r.max ?? null, date:Date.now(), detail: r.sorted ? r.sorted.slice(0,2) : null}; save();
+  let main = "";
+  if (r.sorted) {
+    main = `<h2 class="rtitle">Ваш результат</h2>${r.sorted.map((k,i) => `<div class="lang ${i<2?"top":""}">${i<2?'<span class="tag" style="margin:0 0 8px">Ваш ведущий язык</span>':""}<div class="lt"><span>${LOVE[k].t}</span><span>${r.counts[k]}</span></div><div class="meter"><div style="width:${r.counts[k]/12*100}%"></div></div><p>${LOVE[k].d}</p></div>`).join("")}
+      <div class="vector"><strong>Ваш следующий шаг</strong>Теперь, когда вы знаете ваш язык любви, вы можете поделиться этим с вашим партнером, чтобы он или она могли выражать свою любовь понятным вам языком. <b>Дайте этот тест и вашему партнеру.</b> Так вы будете понимать, каким языком разговаривать с ним или с ней, чтобы быть услышанным.</div>`;
+  } else {
+    main = `<span class="tag">Ваш текущий профиль</span><div class="score"><b>${r.score}</b><span>/ ${r.max}</span></div><div class="meter"><div style="width:${(r.score-r.min)/(r.max-r.min)*100}%"></div></div>
+      <h2 class="rtitle">${r.title}</h2><p>${r.text}</p>${r.vector ? `<div class="vector"><strong>Ваш вектор роста</strong>${r.vector}</div>` : ""}`;
+  }
+  view.innerHTML = `<section class="band fade"><div class="card" style="padding:24px 20px">${main}<div class="ask"><strong>Вопрос коуча</strong>${q.ask}</div></div>
+    ${CAN_SUBSCRIBE ? mailForm() : ""}
+    <h2 style="margin-top:24px">Что пройти дальше</h2><p class="muted">Официальные тесты, которые дополнят этот результат.</p>${q.next.map(n => extCard(extById(n))).join("")}
+    <div class="row" style="margin-top:8px"><button class="btn" id="share">Скопировать результат</button><button class="btn ghost" data-go="profile">Моя карта</button></div>
+    <button class="btn ghost" style="margin-top:10px" id="again">Пройти заново</button></section>`;
+  $("#again").addEventListener("click", () => quiz(id));
+  if (CAN_SUBSCRIBE) bindMail(id, q, r);
+  $("#share").addEventListener("click", async () => {
+    const txt = `Мой результат в тесте "${q.title}" (Life by Design): ${r.title}${r.score!=null ? `, ${r.score}/${r.max}` : ""}`;
+    try { await navigator.clipboard.writeText(txt); toast("Результат скопирован"); } catch(e) { toast("Не удалось скопировать"); }
+  });
+  window.scrollTo(0,0);
+}
+
+/* ===== Результат на почту (MailerLite через Netlify) ===== */
+function mailForm() {
+  const m = S.me || {};
+  return `<form class="mail" id="mail" novalidate><h3>Получить результат на почту</h3><p class="muted" style="font-size:15px;margin:0">Пришлем ваш результат и вопрос коуча, чтобы он был под рукой.</p>
+    <div class="slot"><label for="m-name">Имя</label><input id="m-name" autocomplete="given-name" value="${esc(m.name||"")}" required></div>
+    <div class="slot"><label for="m-email">Email</label><input id="m-email" type="email" inputmode="email" autocomplete="email" value="${esc(m.email||"")}" required></div>
+    <input class="hp" id="m-web" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <label class="chk"><input type="checkbox" id="m-news"> <span>Хочу получать рассылку Life by Design: новые тесты, встречи и полезные материалы</span></label>
+    <button class="btn" id="m-send" type="submit">Отправить мне результат</button>
+    <p class="fine">Нажимая кнопку, вы соглашаетесь получить письмо с результатом. Мы не передаем ваши данные третьим лицам. Отписаться можно в один клик в любом письме.</p>
+    <div id="m-msg" role="status"></div></form>`;
+}
+function resultDetails(id, q, r) {
+  if (r.sorted) return r.sorted.map((k,i) => `${i+1}. ${LOVE[k].t} (${r.counts[k]}) - ${LOVE[k].d}`).join("\n");
+  return `${r.score} из ${r.max}. ${r.text}${r.vector ? "\n\nВаш вектор роста: " + r.vector : ""}`;
+}
+function bindMail(id, q, r) {
+  const f = $("#mail"), msg = $("#m-msg"), btn = $("#m-send");
+  f.addEventListener("submit", async e => {
+    e.preventDefault(); msg.innerHTML = "";
+    const name = $("#m-name").value.trim(), email = $("#m-email").value.trim();
+    if (!name) { msg.innerHTML = '<p class="err">Пожалуйста, напишите ваше имя.</p>'; return $("#m-name").focus(); }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.innerHTML = '<p class="err">Проверьте, пожалуйста, адрес почты.</p>'; return $("#m-email").focus(); }
+    btn.disabled = true; btn.textContent = "Отправляем...";
+    try {
+      const res = await fetch(SUBSCRIBE_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
+        name, email, quiz:id, test:q.title, result:r.title, details:resultDetails(id,q,r), ask:q.ask,
+        newsletter: $("#m-news").checked, website: $("#m-web").value })});
+      if (!res.ok) throw new Error(res.status);
+      S.me = {name, email}; save();
+      f.innerHTML = `<div class="ok">Готово, ${esc(name)}! Письмо с результатом придет в течение нескольких минут. Если не видите его, загляните в папку "Промоакции" или "Спам".</div>`;
+    } catch(err) {
+      btn.disabled = false; btn.textContent = "Отправить мне результат";
+      msg.innerHTML = '<p class="err">Не получилось отправить. Попробуйте еще раз через минуту или скопируйте результат кнопкой ниже.</p>';
+    }
+  });
+}
+
+/* ===== Навигация ===== */
+function route() {
+  const h = (location.hash || "#home").slice(1);
+  closeSheet();
+  const tab = h.startsWith("tests") ? "tests" : h.startsWith("profile") ? "profile" : "home";
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.t===tab));
+  if (h==="tests") tests();
+  else if (h==="profile") profile();
+  else if (h.startsWith("cat-")) cat(h.slice(4));
+  else if (h.startsWith("quiz-")) quiz(h.slice(5));
+  else home();
+  window.scrollTo(0,0);
+}
+const go = h => { if (location.hash === "#"+h) route(); else location.hash = h; };
+document.addEventListener("click", e => {
+  const ex = e.target.closest("[data-ext]"); if (ex) { e.preventDefault(); return openSheet(ex.dataset.ext); }
+  const g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); return go(g.dataset.go); }
+  const t = e.target.closest(".tabs button"); if (t) return go(t.dataset.t);
+  const f = e.target.closest("[data-f]"); if (f) { filter = f.dataset.f; tests(); }
+});
+document.addEventListener("keydown", e => { const g = e.target.closest && e.target.closest("g[data-go]"); if (g && (e.key==="Enter"||e.key===" ")) { e.preventDefault(); go(g.dataset.go); } });
+window.addEventListener("hashchange", route);
+route();
+}
+</script>
+</body>
+</html>
