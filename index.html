@@ -58,8 +58,8 @@ p{margin:0 0 10px}
 .map .me{fill:#fff}
 .map .me-t{fill:var(--blue);font-weight:800;font-size:15px}
 .map g{cursor:pointer}
-.prog{display:flex;align-items:center;justify-content:center;text-align:left;gap:12px;font-size:14px;color:#dfe7fb;margin:6px 0 16px}
-.prog b{color:var(--gold);font-size:20px;white-space:nowrap}
+.prog{display:block;text-align:center;font-size:14px;line-height:1.5;color:#dfe7fb;margin:6px auto 16px;max-width:340px}
+.prog b{display:block;color:var(--gold);font-size:22px;white-space:nowrap;margin-bottom:2px}
 /* buttons */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;padding:14px 22px;border:0;border-radius:18px;background:var(--blue);color:#fff;font-weight:600;font-size:16px;text-decoration:none;text-align:center;transition:transform .2s,opacity .2s}
 .btn:hover{transform:translateY(-2px)}
@@ -351,7 +351,7 @@ function home() {
     <h1>Узнай себя лучше</h1>
     <p>Лучшие тесты самопознания в одном месте - с объяснением, что каждый дает, и ссылкой на первоисточник.</p>
     ${mapSVG()}
-    <div class="prog"><b>${doneCount()} / 6</b> областей карты открыто. Нажмите на точку, чтобы перейти к ней.</div>
+    <div class="prog"><b>${doneCount()} из 6</b> областей карты открыто. Нажмите на точку, чтобы перейти к ней.</div>
     <button class="btn light" data-go="${nextOwn ? "quiz-"+nextOwn : "profile"}">${nextOwn ? "Начать с теста Life by Design" : "Посмотреть мою карту"}</button>
   </section>
   <section class="band"><h2>Начните здесь</h2><p class="muted">Короткие тесты Life by Design. Проходятся прямо в приложении, а после каждого вы узнаете, какой официальный тест пройти дальше.</p>${OWN_IDS.map(ownCard).join("")}</section>
@@ -547,7 +547,7 @@ function bindMail(id, q, r) {
       const res = await fetch(SUBSCRIBE_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
         name, email, quiz:id, test:q.title, result:r.title, details:resultDetails(id,q,r), parts: r.sorted ? r.sorted.map((k,i) => ({t:`${i+1}. ${LOVE[k].t} (${r.counts[k]})`, d:LOVE[k].d})) : [], ask:q.ask,
         newsletter: $("#m-news").checked, website: $("#m-web").value })});
-      if (!res.ok) throw new Error(res.status);
+      if (!res.ok) { console.error("subscribe", res.status, await res.text().catch(() => "")); throw new Error(res.status); }
       S.me = {name, email}; save();
       f.innerHTML = `<div class="ok">Готово, ${esc(name)}! Письмо с результатом придет в течение нескольких минут. Если не видите его, загляните в папку "Промоакции" или "Спам".</div>`;
     } catch(err) {
