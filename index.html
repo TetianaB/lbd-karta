@@ -547,12 +547,12 @@ function bindMail(id, q, r) {
       const res = await fetch(SUBSCRIBE_URL, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({
         name, email, quiz:id, test:q.title, result:r.title, details:resultDetails(id,q,r), parts: r.sorted ? r.sorted.map((k,i) => ({t:`${i+1}. ${LOVE[k].t} (${r.counts[k]})`, d:LOVE[k].d})) : [], ask:q.ask,
         newsletter: $("#m-news").checked, website: $("#m-web").value })});
-      if (!res.ok) { console.error("subscribe", res.status, await res.text().catch(() => "")); throw new Error(res.status); }
+      if (!res.ok) { const t = await res.text().catch(() => ""); throw new Error(res.status + " " + t.slice(0, 300)); }
       S.me = {name, email}; save();
       f.innerHTML = `<div class="ok">Готово, ${esc(name)}! Письмо с результатом придет в течение нескольких минут. Если не видите его, загляните в папку "Промоакции" или "Спам".</div>`;
     } catch(err) {
       btn.disabled = false; btn.textContent = "Отправить мне результат";
-      msg.innerHTML = '<p class="err">Не получилось отправить. Попробуйте еще раз через минуту или скопируйте результат кнопкой ниже.</p>';
+      msg.innerHTML = '<p class="err">Не получилось отправить. Попробуйте еще раз через минуту или скопируйте результат кнопкой ниже.</p><p class="fine">Код ошибки: ' + esc(String(err && err.message || err)) + '</p>';
     }
   });
 }
