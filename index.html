@@ -132,7 +132,7 @@ p{margin:0 0 10px}
 .ask{background:var(--soft);border-radius:20px;padding:18px;margin-top:14px}
 .ask strong{display:block;color:var(--gold);margin-bottom:6px}
 .lang{border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
-.lang.top{border:3px solid var(--gold);background:var(--soft)}
+.lang.lead{border:3px solid var(--gold);background:var(--soft)}
 .lang .lt{display:flex;justify-content:space-between;font-weight:700;color:var(--head)}
 .lang .meter{margin:8px 0 6px;height:8px}
 .lang p{font-size:15px;line-height:1.5;color:var(--muted);margin:0}
@@ -499,7 +499,7 @@ function showResult() {
   S.own[id] = {title:r.title, score:r.score ?? null, max:r.max ?? null, date:Date.now(), detail: r.sorted ? r.sorted.slice(0,2) : null}; save();
   let main = "";
   if (r.sorted) {
-    main = `<h2 class="rtitle">Ваш результат</h2>${r.sorted.map((k,i) => `<div class="lang ${i<2?"top":""}">${i<2?'<span class="tag" style="margin:0 0 8px">Ваш ведущий язык</span>':""}<div class="lt"><span>${LOVE[k].t}</span><span>${r.counts[k]}</span></div><div class="meter"><div style="width:${r.counts[k]/12*100}%"></div></div><p>${LOVE[k].d}</p></div>`).join("")}
+    main = `<h2 class="rtitle">Ваш результат</h2>${r.sorted.map((k,i) => `<div class="lang ${i<2?"lead":""}">${i<2?'<span class="tag" style="margin:0 0 8px">Ваш ведущий язык</span>':""}<div class="lt"><span>${LOVE[k].t}</span><span>${r.counts[k]}</span></div><div class="meter"><div style="width:${r.counts[k]/12*100}%"></div></div><p>${LOVE[k].d}</p></div>`).join("")}
       <div class="vector"><strong>Ваш следующий шаг</strong>Теперь, когда вы знаете ваш язык любви, вы можете поделиться этим с вашим партнером, чтобы он или она могли выражать свою любовь понятным вам языком. <b>Дайте этот тест и вашему партнеру.</b> Так вы будете понимать, каким языком разговаривать с ним или с ней, чтобы быть услышанным.</div>`;
   } else {
     main = `<span class="tag">Ваш текущий профиль</span><div class="score"><b>${r.score}</b><span>/ ${r.max}</span></div><div class="meter"><div style="width:${(r.score-r.min)/(r.max-r.min)*100}%"></div></div>
