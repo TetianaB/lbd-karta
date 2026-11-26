@@ -52,6 +52,12 @@ function partFields(parts) {
 }
 
 export default async (req) => {
+  // Диагностика без отправки писем: GET ?check=1 показывает, видит ли функция ключ и отвечает ли MailerLite.
+  if (req.method === "GET" && new URL(req.url).searchParams.get("check") === "1") {
+    const out = { configured: Boolean(process.env.MAILERLITE_API_KEY), keyLength: (process.env.MAILERLITE_API_KEY || "").length };
+    try { await ml(`/groups/${QUIZ_GROUPS.love}`); out.mailerlite = "ok"; } catch (e) { out.mailerlite = String(e.message || e).slice(0, 300); }
+    return json(out);
+  }
   if (req.method !== "POST") return json({ error: "method" }, 405);
   if (!process.env.MAILERLITE_API_KEY) return json({ error: "not configured" }, 500);
 
